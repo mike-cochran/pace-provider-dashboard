@@ -1,0 +1,49 @@
+# Habitat Health Case Study - Enrollment Dashboard
+
+This project contains a Streamlit dashboard that visualizes Medicare enrollment data across California counties.
+
+## Overview
+
+The dashboard provides two key visualizations:
+1.  **Enrollment Trends**: A stacked bar chart showing enrollment growth over time for top counties.
+2.  **Geographic Distribution**: A map of California displaying the latest enrollment numbers by county.
+
+## Instructions for Non-Technical Users
+
+If you do not have Python installed on your computer, please follow these steps to set up the environment and run the dashboard.
+
+### Step 1: Install Python
+
+1.  Go to the official Python website: [https://www.python.org/downloads/](https://www.python.org/downloads/)
+2.  Download the latest version for Windows.
+3.  Run the installer. **IMPORTANT**: On the first screen of the installer, check the box that says **"Add Python to PATH"**. This is crucial.
+4.  Click "Install Now" and wait for the installation to finish.
+
+### Step 2: Install Dependencies
+
+1.  Open the folder containing these files.
+2.  Right-click on an empty space in the folder while holding the `Shift` key (or just right-click in Windows 11) and select **"Open in Terminal"** or **"Open PowerShell window here"**.
+3.  Type the following command and press Enter:
+    ```bash
+    pip install -r requirements.txt
+    ```
+    *If that doesn't work, try:* `py -m pip install -r requirements.txt`
+
+### Step 3: Run the Dashboard
+
+Once the installation is complete, you can run the dashboard easily:
+
+1.  **Double-click** the file named `run_dashboard.bat`.
+2.  A terminal window will open, and shortly after, the dashboard will open in your default web browser.
+
+Alternatively, you can run it from the terminal using:
+```bash
+streamlit run dashboard.py
+```
+
+## Files Description
+
+-   `dashboard.py`: The main code for the visualization app.
+-   `requirements.txt`: Identify the software packages required to run the app.
+-   `run_dashboard.bat`: A shortcut script to launch the app.
+-   `outputs/Combined enrollment.xlsx`: The source data file used by the dashboard.
