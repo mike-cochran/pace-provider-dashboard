@@ -450,6 +450,25 @@ def main():
             color_continuous_scale='Redor',
             labels={'county': 'County', 'Providers_Per_100_MA_Enrolled': 'Providers per 100 MA Enrollees'}
         )
+        
+        # --- Add National Benchmark Line ---
+        # Only if "All Specialties" is selected (since we only calc national total count)
+        if selected_gap_spec == "All Specialties":
+            try:
+                nat_stats = pd.read_csv('outputs/national_stats.csv')
+                nat_prov_count = nat_stats.loc[nat_stats['Metric'] == 'National_Provider_Count', 'Value'].values[0]
+                
+                nat_enrl = pd.read_csv('outputs/MA_Enrollment_National.csv')
+                latest_nat_enrl = nat_enrl.sort_values('DATE').iloc[-1]['NATIONAL_MA_ENROLLED']
+                
+                nat_density = (nat_prov_count / latest_nat_enrl) * 100
+                
+                fig_gap.add_vline(x=nat_density, line_dash="dash", line_color="green", annotation_text=f"National Avg ({nat_density:.1f}) | Total Providers: {nat_prov_count:,.0f} | Total MA: {latest_nat_enrl:,.0f}", annotation_position="top right")
+            except Exception as e:
+                # st.warning(f"Could not load National Benchmarks: {e}")
+                pass
+        # -----------------------------------
+        
         st.plotly_chart(fig_gap, use_container_width=True)
 
     # --- Page 6: Strategy Write-up ---

@@ -66,6 +66,31 @@ def process_provider_data():
         df_prov = pd.read_csv(provider_file, usecols=cols, low_memory=False)
 
     print(f"Total Providers loaded: {len(df_prov)}")
+    
+    # --- National Provider Count ---
+    # Count unique NPIs in the entire file (National)
+    national_provider_count = df_prov['Rndrng_NPI'].nunique()
+    print(f"National Provider Count: {national_provider_count}")
+    
+    # Save National Stats
+    # We try to load the national enrollment file if it exists
+    nat_stats = [{'Metric': 'National_Provider_Count', 'Value': national_provider_count}]
+    
+    try:
+        nat_enrl_df = pd.read_csv('outputs/MA_Enrollment_National.csv')
+        latest_nat_enrl = nat_enrl_df.sort_values('DATE').iloc[-1]['NATIONAL_MA_ENROLLED']
+        nat_stats.append({'Metric': 'National_MA_Enrollment', 'Value': latest_nat_enrl})
+        
+        # Calculate Density
+        nat_density = (national_provider_count / latest_nat_enrl) * 100
+        nat_stats.append({'Metric': 'National_Provider_Density', 'Value': nat_density})
+        print(f"National Density Calculated: {nat_density}")
+        
+    except Exception as e:
+        print(f"Could not calc National Density (Enrollment file missing?): {e}")
+
+    pd.DataFrame(nat_stats).to_csv('outputs/national_stats.csv', index=False)
+    # -------------------------------
 
     # 4. Filter for CA
     df_ca = df_prov[df_prov['Rndrng_Prvdr_State_Abrvtn'] == 'CA'].copy()

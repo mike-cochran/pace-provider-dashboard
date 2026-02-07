@@ -76,6 +76,7 @@ def clean_and_combine(file_list, states):
     # Create empty dataframe for appending
     combined_enrl = pd.DataFrame()
     combined_total_ma = pd.DataFrame()
+    combined_national_ma = pd.DataFrame()
 
     # Process each ratebooks file and combine
     for enrl_file in file_list:
@@ -95,18 +96,25 @@ def clean_and_combine(file_list, states):
         # Limit to relevant columns
         keep_cols = ['STATE', 'COUNTY', 'PLAN TYPE', 'ENROLLED']
         enrl_df = enrl_df[keep_cols]
-
-        # Limit to selected states and localities
-        enrl_df = enrl_df[enrl_df['STATE'].isin(states)]
         
         # Clean up zero enrolled values for calculation
         enrl_df['ENROLLED'] = pd.to_numeric(enrl_df['ENROLLED'].replace('.',0), errors='coerce').fillna(0)
         
-        # --- Process Total MA Enrollment ---
-        ma_df = enrl_df.groupby(['STATE', 'COUNTY'], as_index=False)['ENROLLED'].sum()
-        ma_df['DATE'] = pd.to_datetime(f"{year}-{month}-01")
-        combined_total_ma = pd.concat([combined_total_ma, ma_df], ignore_index=True)
+        # --- Process Total MA Enrollment (NATIONAL & STATE) ---
+        # 1. State Level (for CA)
+        state_ma_df = enrl_df[enrl_df['STATE'].isin(states)].groupby(['STATE', 'COUNTY'], as_index=False)['ENROLLED'].sum()
+        state_ma_df['DATE'] = pd.to_datetime(f"{year}-{month}-01")
+        combined_total_ma = pd.concat([combined_total_ma, state_ma_df], ignore_index=True)
+        
+        # 2. National Level
+        national_ma_sum = enrl_df['ENROLLED'].sum()
+        # Create a tiny DF to append
+        nat_df = pd.DataFrame({'DATE': [pd.to_datetime(f"{year}-{month}-01")], 'NATIONAL_MA_ENROLLED': [national_ma_sum]})
+        combined_national_ma = pd.concat([combined_national_ma, nat_df], ignore_index=True)
         # -----------------------------------
+
+        # Limit to selected states and localities
+        enrl_df = enrl_df[enrl_df['STATE'].isin(states)]
 
         # Limit to PACE
         enrl_df = enrl_df[enrl_df['PLAN TYPE'] == 'National PACE']
@@ -121,11 +129,13 @@ def clean_and_combine(file_list, states):
     # Deal with duplicate rows by summing enrollment
     combined_enrl = combined_enrl.groupby(['STATE', 'COUNTY', 'PLAN TYPE', 'DATE'], as_index=False)['ENROLLED'].sum()
     combined_total_ma = combined_total_ma.groupby(['STATE', 'COUNTY', 'DATE'], as_index=False)['ENROLLED'].sum()
+    combined_national_ma = combined_national_ma.groupby('DATE', as_index=False)['NATIONAL_MA_ENROLLED'].sum()
 
     # Save combined results
     combined_enrl.to_excel(directory + r'\outputs\Combined enrollment.xlsx', index=False)
     combined_total_ma.to_excel(directory + r'\outputs\MA_Enrollment_Total.xlsx', index=False)
-    print("Saved Total MA Enrollment to outputs/MA_Enrollment_Total.xlsx")
+    combined_national_ma.to_csv(directory + r'\outputs\MA_Enrollment_National.csv', index=False)
+    print("Saved National MA Enrollment to outputs/MA_Enrollment_National.csv")
     print(combined_enrl)
 
     return combined_enrl
