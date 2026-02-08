@@ -379,7 +379,7 @@ def main():
         
         # 3. Cost Benchmarks (Dynamic vs State) - TOP 10 BY VOLUME
         st.subheader("💰 Cost Benchmarks: Selected Counties vs CA Avg")
-        st.markdown("Comparison for Top 10 High-Volume Specialties.")
+        st.markdown("Comparison for Top 10 High-Volume Specialties")
         
         # Filter Benchmarks to Top 10 by VOLUME
         top_vol_specs = spec_metrics.sort_values('Tot_Mdcr_Pymt_Amt', ascending=False).head(10)['Rndrng_Prvdr_Type'].tolist()
