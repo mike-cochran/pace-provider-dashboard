@@ -356,6 +356,17 @@ def main():
             },
             height=600
         )
+
+        fig_spec.update_traces(
+            hovertemplate=(
+                "<b>%{hovertext}</b><br><br>"
+                "<b>Total Beneficiaries:</b> %{x:.2s}<br>"
+                "<b>Avg Cost per Bene:</b> $%{y:,.0f}<br>"
+                "<b>Total Spend:</b> $%{marker.size:,.2s}<br>"
+                "<extra></extra>"
+            )
+        )
+
         
         # Add Quadrant Lines (Median)
         x_med = top_spec_metrics['Tot_Benes'].median()
@@ -404,6 +415,15 @@ def main():
                 'Selected_Avg_Cost': 'Counties Avg Cost ($)'
                 }
         )
+
+        fig_bench.update_traces(
+            hovertemplate=(
+                "<b>Specialty:</b> %{x}<br>"
+                "<b>Avg Cost:</b> $%{y:,.0f}<br>"
+                "<extra></extra>"
+            )
+        )
+
         st.plotly_chart(fig_bench, use_container_width=True)
         
         # 4. Gap Analysis (Dynamic) - USING TOTAL MA ENROLLMENT
@@ -449,6 +469,14 @@ def main():
             color='Providers_Per_100_MA_Enrolled',
             color_continuous_scale='Redor',
             labels={'county': 'County', 'Providers_Per_100_MA_Enrolled': 'Providers per 100 MA Enrollees'}
+        )
+
+        fig_gap.update_traces(
+            hovertemplate=(
+                "<b>County:</b> %{y}<br>"
+                "<b>Providers per 100 MA Enrollees:</b> %{x:.2f}<br>"
+                "<extra></extra>"
+            )
         )
         
         # --- Add National Benchmark Line ---
