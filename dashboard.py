@@ -424,6 +424,14 @@ def main():
             )
         )
 
+        fig_bench.for_each_trace(
+            lambda t: t.update(
+                name="Selected Counties Avg"
+                if t.name == "Selected_Avg_Cost"
+                else "CA State Avg"
+            )
+        )
+
         st.plotly_chart(fig_bench, use_container_width=True)
         
         # 4. Gap Analysis (Dynamic) - USING TOTAL MA ENROLLMENT
